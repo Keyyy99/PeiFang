@@ -1,1 +1,62 @@
+include Irvine32.inc
+decrease proto c, array:PTR Dword, arraysize:Dword
 
+.data
+count dword 0
+Ccount dword 0
+
+.code
+decrease proc c, array:PTR Dword, arraysize:Dword
+mov esi,array
+add array,4
+mov edi,array
+mov ecx,10
+
+start:
+mov eax,[esi]
+mov edx,[edi]
+cmp eax,edx
+jg L1
+jl increase
+loop start
+jmp finish
+
+increase:
+mov esi,array
+add array,4
+mov edi,array
+loop start
+
+L1: 
+	mov eax,[esi]
+    mov edx,[edi]
+	.IF eax>edx
+	  inc count
+	  mov esi,array
+	  add array,4
+	  mov edi,array
+	  loop L1
+	.ELSE
+	  mov esi,array
+	  add array,4
+	  mov edi,array
+	  jmp Bincrease
+	.ENDIF
+
+Bincrease:
+	mov eax,Ccount
+	.IF eax<count
+	    mov eax,count
+	    mov Ccount,eax
+		mov count,0
+	    loop start
+	.ELSE
+	    loop start
+    .ENDIF
+
+finish:
+  mov eax,Ccount
+  ret
+
+decrease ENDP
+END
